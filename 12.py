@@ -50,7 +50,7 @@ def scoreDedicate():
     # browser.set_window_size(1400, 900)
 
     # wait = WebDriverWait(browser, 10)
-    a = 1
+    a = 0
     while 1 == 1:
         # r = requests.get("http://secim.haberler.com/2017/referandum/")
         # # driver = webdriver.PhantomJS(executable_path='/bin/phantomjs/bin/phantomjs')  # 如果不方便配置环境变量。就使用phantomjs的绝对路径也可以
@@ -78,19 +78,36 @@ def scoreDedicate():
         doc = etree.HTML(sql)
         htmls = doc.xpath('/html')
         edata = []
-        for html in htmls:
-            pushTime = html.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[1]')
-            # data = doc.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div[3]/div[1]/ul/li[1]')
-            targetUser = html.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[4]/span/span[1]')
-            arriveUser = html.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[4]/span/span[3]')
-            clickUser = html.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[2]/div[1]/ul/li[4]/span[1]')
-            a = 0
-            for item in pushTime:
-                pushContent = html.xpath('//*[@id="notify' + str((a+50) % 5) + '"]/text()')
-                content = json.loads(pushContent[0])
-                ed = (item.text, arriveUser[a].text, targetUser[a].text, clickUser[a].text, content.get("ios").get("extras").get("news_id"), content.get("ios").get("alert"))
-                edata.append(ed)
-                a += 1
+        pushTime = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[1]')
+        # data = doc.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div[3]/div[1]/ul/li[1]')
+        targetUser = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[4]/span/span[1]')
+        arriveUser = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[1]/ul/li[4]/span/span[3]')
+        clickUser = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[2]/div[1]/ul/li[4]/span[1]')
+        test = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div/div[2]/div[2]/ul/li[4]/span[1]')
+        c = 0
+        for item in pushTime:
+            b = str((a+50) % 50)
+            pushContent = htmls[0].xpath('//*[@id="notify' + b + '"]/text()')
+            content = json.loads(pushContent[int(a/50)])
+            clickUser1 = htmls[0].xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div[' + str(
+                a+2) + ']/div[2]/div[2]/ul/li[4]/span[1]')
+            if len(clickUser1) > 0:
+                if test[c].text != int(clickUser1[0].text):
+                    click = int(clickUser[a].text)
+                    if click > 700:
+                        aa = 1
+                else:
+                    #clickUser1 = html.xpath('//*[@id="base-main"]/div[2]/div/div/div[3]/div[2]/div[' + str(a) + ']/div[2]/div[2]/ul/li[4]/span[1]')
+                    click = int(clickUser1[0].text)
+                    c+=1
+            if pushContent[int(a/50)].find('news_id') >= 0:
+                newsid = content.get("ios").get("extras").get("news_id")
+            else:
+                newsid = 0
+            ed = (item.text, int(str(arriveUser[a].text)), int(targetUser[a].text), click, newsid,
+                  pushContent[int(a/50)].split('"alert":')[1].replace('"', '').replace('}', ''))
+            edata.append(ed)
+            a += 1
         import xlwt
         workbook = xlwt.Workbook(encoding='utf-8')
         booksheet = workbook.add_sheet('Sheet 1', cell_overwrite_ok=True)
