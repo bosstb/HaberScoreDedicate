@@ -52,13 +52,13 @@ def scoreDedicate():
     # wait = WebDriverWait(browser, 10)
     a = 1
     while 1 == 1:
-        # r = requests.get("http://secim.haberler.com/2017/referandum/")
+        r = requests.get("https://journo.com.tr/")
         # # driver = webdriver.PhantomJS(executable_path='/bin/phantomjs/bin/phantomjs')  # 如果不方便配置环境变量。就使用phantomjs的绝对路径也可以
         # # driver.get('http://image.baidu.com/i?ie=utf-8&word=%E5%91%A8%E6%9D%B0%E4%BC%A6')  # 抓取了百度图片，query：周杰伦
         #   # 这就是返回的页面内容了，与urllib2.urlopen().read()的效果是类似的，但比urllib2强在能抓取到动态渲染后的内容。
         # # time.sleep(20)
         # # lis = browser.find_element_by_xpath('/html/body/div[6]/header/div[1]/div/div[2]/div/div[4]/div')
-
+        print r.text
 
         f = open("HTML", "r")
         sql = ''
